@@ -5,6 +5,7 @@
   "dependencies": {
     "@prisma/client": "^6.1.0",
     "@prisma/extension-accelerate": "^1.2.1",
+    "@saudsayyed/medium-common": "^1.0.0",
     "@types/node": "^22.10.2"
   },
   "name": "medium",

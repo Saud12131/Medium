@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { decode, sign, verify } from 'hono/jwt'
-
+import { createblog, updateblog } from '@saudsayyed/medium-common'
 //1:26
 
 export let BlogRoute = new Hono<{
@@ -41,6 +41,12 @@ BlogRoute.post('/create', async (c) => {
     let body = await c.req.json();
     const userId = c.get("userId");
 
+    const { success } = createblog.safeParse(body);
+    if (!success) {
+        c.json({
+            message: "incorrect input formate"
+        });
+    }
     try {
         let post = await prisma.post.create({
             data: {
@@ -78,9 +84,13 @@ BlogRoute.put('/update', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-
     let body = await c.req.json();
-
+    const { success } = updateblog.safeParse(body);
+    if (!success) {
+        c.json({
+            message: "incorrect input formate"
+        });
+    }
     try {
         let post = await prisma.post.update({
             where: {
@@ -93,7 +103,7 @@ BlogRoute.put('/update', async (c) => {
             }
         });
 
-       return c.json({
+        return c.json({
             id: post.id,
         })
     } catch (err) {
@@ -109,7 +119,7 @@ BlogRoute.get('/:id', async (c) => {
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
 
-    let id =  c.req.param("id");
+    let id = c.req.param("id");
 
     try {
         let post = await prisma.post.findFirst({
@@ -120,7 +130,7 @@ BlogRoute.get('/:id', async (c) => {
         return c.json({
             post
         })
-      
+
     } catch (err) {
         c.status(411);
         c.json({
