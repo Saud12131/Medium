@@ -41,6 +41,8 @@ UserRoute.post('/signup', async (c) => {
 
   } catch (err) {
     c.status(401)
+    console.log(err);
+    
     return c.json({ err });
   }
 

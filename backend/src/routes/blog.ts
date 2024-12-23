@@ -107,6 +107,7 @@ BlogRoute.put('/update', async (c) => {
             id: post.id,
         })
     } catch (err) {
+        console.log(err);
         c.json({
             err
         });
@@ -133,6 +134,7 @@ BlogRoute.get('/:id', async (c) => {
 
     } catch (err) {
         c.status(411);
+        console.log(err);
         c.json({
             message: "error while fetching blog post",
             err
