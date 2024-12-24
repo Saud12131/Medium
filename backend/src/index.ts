@@ -8,7 +8,11 @@ const app = new Hono<{
     JWT_SECRET: String
   }
 }>()
-app.use('*', cors())
+app.use('*', cors({
+  origin: '*', // Adjust as needed for security
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.get('/', async (c) => {
 

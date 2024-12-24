@@ -19,8 +19,11 @@ export default function SignUpPage() {
             const jwt = response.data.jwt;
             localStorage.setItem("token", jwt);
             // console.log(response);
-            navigate("/")
+            navigate("/blogs")
         } catch (err) {
+            if (err) {
+                alert("something went wrong");
+            }
             console.log(err);
         }
     }
@@ -77,6 +80,8 @@ export default function SignUpPage() {
                                     Password
                                 </label>
                                 <input
+                                    autoComplete='current-password'
+
                                     id="password"
                                     type="password"
                                     placeholder='create a password'

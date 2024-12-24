@@ -1,17 +1,29 @@
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { SignIninput } from '@saudsayyed/medium-common'
+import axios from 'axios'
+import { BACKEND_URL } from '../cofig'
+
 export default function Signin() {
   const [formData, setFormData] = useState<SignIninput>({
     email: '',
     password: ''
   })
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`, formData);
+      const jwt = response.data.jwt;
+      localStorage.setItem("token", jwt);
+      console.log('Form submitted:', response)
+      navigate("/blogs")
+    } catch (err) {
+      if (err) {
+        alert("something went wrong");
+      }
+    }
   }
 
   return (
@@ -36,6 +48,8 @@ export default function Signin() {
                   email
                 </label>
                 <input
+                  autoComplete='current-username'
+
                   id="email"
                   type="text"
                   placeholder="Enter your email"
@@ -51,6 +65,7 @@ export default function Signin() {
                   Password
                 </label>
                 <input
+                  autoComplete='current-password'
                   id="password"
                   type="password"
                   placeholder='enter your password'

@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { decode, sign, verify } from 'hono/jwt'
-import { signininput, SignIninput, signupinput, Signupinput } from '@saudsayyed/medium-common'
+
 
 export let UserRoute = new Hono<{
   Bindings: {
@@ -11,19 +11,13 @@ export let UserRoute = new Hono<{
   }
 }>()
 
-
 UserRoute.post('/signup', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
 
   const body = await c.req.json();
-  const { success } = signupinput.safeParse(body);
-  if(!success){
-    c.json({
-      message:"incorrect input formate"
-    });
-  }
+ 
   try {
     const user = await prisma.user.create({
       data: {
@@ -40,12 +34,9 @@ UserRoute.post('/signup', async (c) => {
     });
 
   } catch (err) {
-    c.status(401)
-    console.log(err);
-    
-    return c.json({ err });
+    console.error(err);
+    return c.json({ error: "Internal server error" }, 500);  // Added more specific error message
   }
-
 })
 
 UserRoute.post('/login', async (c) => {
@@ -55,7 +46,8 @@ UserRoute.post('/login', async (c) => {
 
   const body = await c.req.json();
   try {
-    const { success } = signininput.safeParse(body);
+   
+
     const user = await prisma.user.findFirst({
       where: {
         email: body.email,
@@ -63,18 +55,17 @@ UserRoute.post('/login', async (c) => {
       }
     });
     if (!user) {
-      c.status(403);
       return c.json({
         error: "Invalid credentials"
-      });
+      }, 403);
     }
+
     //@ts-ignore
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
     return c.json({ jwt })
-  } catch (err) {
-    c.status(401)
-    console.log(err);
-    return c.text("something broked");
-  }
 
+  } catch (err) {
+    console.error(err);
+    return c.text("Something went wrong", 500);  // More consistent error handling
+  }
 })
