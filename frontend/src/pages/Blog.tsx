@@ -2,11 +2,11 @@
 import { Link } from 'react-router-dom';
 import Appbar from '../components/Appbar'
 import Card from '../components/Card'
-import useblogs from '../hooks/BlogHook';
+import {useBlogs} from '../hooks/BlogHook';
 
 export default function Blog() {
 
-  const { loading, blog } = useblogs();
+  const { loading, blog } = useBlogs();
   if (loading) {
     return <div>
       loading...

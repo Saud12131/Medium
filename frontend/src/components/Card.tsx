@@ -7,7 +7,7 @@ interface BlogcardProps {
     id: string
 }
 
-export default function Card({ authorname, title, content, publisheddate, id }: BlogcardProps) {
+export default function Card({ authorname, title, content, publisheddate }: BlogcardProps) {
     return (
         <article className="max-w-xl rounded-lg border border-gray-200 bg-white p-5 hover:bg-gray-50">
             <div className="flex items-center gap-2 mb-4">

@@ -129,6 +129,12 @@ BlogRoute.get('/:id', async (c) => {
   try {
     const post = await prisma.post.findFirst({
       where: { id: Number(id) },
+      select:{
+        title: true,
+        content: true,
+        id: true,
+        author: { select: { name: true } },
+      }
     });
     if (!post) {
       return c.json({ message: "Post not found" }, 404);
