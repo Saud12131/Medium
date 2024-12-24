@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Appbar from '../components/Appbar'
 import Card from '../components/Card'
 import { useBlogs } from '../hooks/BlogHook';
-import { Spinner } from '../components/spinner';
+import { Spinner } from '../components/spinner.tsx';
 
 export default function Blog() {
 
