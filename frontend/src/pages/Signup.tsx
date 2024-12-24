@@ -18,7 +18,6 @@ export default function SignUpPage() {
             let response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`, formData);
             const jwt = response.data.jwt;
             localStorage.setItem("token", jwt);
-            // console.log(response);
             navigate("/blogs")
         } catch (err) {
             if (err) {

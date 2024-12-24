@@ -4,6 +4,8 @@ import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 import Blog from './pages/Blog'
 import BlogInfo from './pages/BlogInfo'
+import { Create } from './pages/Create'
+import MediumLandingPage from './pages/LandingPage'
 
 function App() {
 
@@ -15,6 +17,8 @@ function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/blogs" element={<Blog />} />
           <Route path="/blogs/:id" element={<BlogInfo />} />
+          <Route path="/create" element={<Create />} />
+          <Route path="/" element={<MediumLandingPage />} />
 
         </Routes>
       </BrowserRouter>

@@ -17,11 +17,12 @@ export default function Signin() {
       const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`, formData);
       const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
-      console.log('Form submitted:', response)
       navigate("/blogs")
     } catch (err) {
       if (err) {
         alert("something went wrong");
+        console.log(err);
+        
       }
     }
   }
