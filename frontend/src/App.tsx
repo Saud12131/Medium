@@ -6,19 +6,20 @@ import Blog from './pages/Blog'
 import BlogInfo from './pages/BlogInfo'
 import { Create } from './pages/Create'
 import MediumLandingPage from './pages/LandingPage'
-
+import UserInfo from './pages/UserInfo'
 function App() {
 
   return (
     <>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<MediumLandingPage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/blogs" element={<Blog />} />
           <Route path="/blogs/:id" element={<BlogInfo />} />
           <Route path="/create" element={<Create />} />
-          <Route path="/" element={<MediumLandingPage />} />
+          <Route path="/user/:id" element={<UserInfo />} />
 
         </Routes>
       </BrowserRouter>

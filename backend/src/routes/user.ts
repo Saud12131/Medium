@@ -17,7 +17,7 @@ UserRoute.post('/signup', async (c) => {
   }).$extends(withAccelerate())
 
   const body = await c.req.json();
- 
+
   try {
     const user = await prisma.user.create({
       data: {
@@ -46,8 +46,6 @@ UserRoute.post('/login', async (c) => {
 
   const body = await c.req.json();
   try {
-   
-
     const user = await prisma.user.findFirst({
       where: {
         email: body.email,
@@ -69,3 +67,62 @@ UserRoute.post('/login', async (c) => {
     return c.text("Something went wrong", 500);  // More consistent error handling
   }
 })
+
+UserRoute.get("/allusers", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  try {
+    const AllUsers = await prisma.user.findMany({
+      select: {
+        name: true,
+        email: true,
+        id: true,
+        posts: true
+      }
+    });
+    return c.json({
+      AllUsers
+    });
+  } catch (err) {
+    return c.json({
+      message: "something broked",
+      err: err
+    });
+  }
+});
+
+// Get Single Post by ID
+UserRoute.get('/:id', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const id = c.req.param("id");
+
+  try {
+    const userDetails = await prisma.user.findFirst({
+      where: { id: Number(id) },
+      select:{
+        name: true,
+        email: true,
+        id: true,
+        posts: { select: { 
+          id:true,
+          title:true,
+          content:true,
+         } },
+      }
+    });
+    if (!userDetails) {
+      return c.json({ message: "Post not found" }, 404);
+    }
+    return c.json({ userDetails });
+  } catch (err) {
+    console.error("Error fetching post:", err);
+    return c.json({ message: "Error while fetching blog post" }, 500);
+  } finally {
+    await prisma.$disconnect();
+  }
+});
