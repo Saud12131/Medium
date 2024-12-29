@@ -11,10 +11,17 @@ export interface UserTypes {
     id: string;
 }
 
+export interface PostTypes {
+    content: string;
+    title: string;
+    id: string;
+}
+
 export default function UserProfile() {
     const [loading, setLoading] = useState(true);
     const [userinfo, setUserinfo] = useState<UserTypes | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [blogs, setblogs] = useState<PostTypes[] | null>([]);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -25,6 +32,7 @@ export default function UserProfile() {
         })
             .then((response) => {
                 setUserinfo(response.data.user)
+                setblogs(response.data.user.posts);
                 setLoading(false);
             })
             .catch((error) => {
@@ -88,6 +96,30 @@ export default function UserProfile() {
                     </div>
                 </div>
             </div>
+
+            {/* My Blogs Section */}
+            <div className="bg-white shadow-xl rounded-lg overflow-hidden mb-8">
+                <div className="bg-gradient-to-r from-green-500 to-teal-600 p-8 text-center">
+                    <h2 className="text-3xl font-bold text-white mb-2">My Blogs</h2>
+                </div>
+                <div className="p-6">
+                        {blogs?.length ? (
+                            <div className="grid grid-cols-1 gap-6">
+                                {blogs.map((post) => (
+                                    <div key={post.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
+                                        <h3 className="text-xl font-bold mb-2">{post.title}</h3>
+                                        <p>{post.content}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-700">You have not written any blogs yet.</p>
+                        )}
+                </div>
+            </div>
         </div>
+        
+
+
     );
 }
