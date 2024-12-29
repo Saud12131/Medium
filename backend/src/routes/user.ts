@@ -1,13 +1,13 @@
 import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { decode, sign, verify } from 'hono/jwt'
+import { decode, jwt, sign, verify } from 'hono/jwt'
 
 
 export let UserRoute = new Hono<{
   Bindings: {
     DATABASE_URL: string
-    JWT_SECRET: String
+    JWT_SECRET: string
   }
 }>()
 
@@ -64,9 +64,67 @@ UserRoute.post('/login', async (c) => {
 
   } catch (err) {
     console.error(err);
-    return c.text("Something went wrong", 500);  // More consistent error handling
+    return c.text("Something went wrong", 500);
   }
 })
+
+UserRoute.get('/profile', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const authorizationHeader = c.req.header('Authorization');
+  if (!authorizationHeader) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  const token = authorizationHeader.split(' ')[1]; // Properly extract the token
+  if (!token) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  try {
+    // Verify the JWT and extract the payload
+    const decoded = await verify(token, c.env.JWT_SECRET) as { id: string };
+    const userId = parseInt(decoded.id, 10);
+    if (isNaN(userId)) {
+      throw new Error('Invalid user ID');
+    }
+
+    const userDetails = await prisma.user.findFirst({
+      where: { id: userId },
+      select: {
+        name: true,
+        email: true,
+        id: true,
+        posts: {
+          select: {
+            id: true,
+            title: true,
+            content: true
+          }
+        },
+      }
+    });
+
+    if (!userDetails) {
+      return c.json({ message: 'User not found' }, 404);
+    }
+
+    return c.json({ user: userDetails });
+  } catch (err) {
+    console.error('Error fetching user profile:', { token, err });
+    return c.json(
+      {
+        message: 'Error while fetching user profile',
+        error: (err as Error).message,
+      },
+      500
+    );
+  } finally {
+    await prisma.$disconnect();
+  }
+});
 
 UserRoute.get("/allusers", async (c) => {
   const prisma = new PrismaClient({
@@ -104,15 +162,17 @@ UserRoute.get('/:id', async (c) => {
   try {
     const userDetails = await prisma.user.findFirst({
       where: { id: Number(id) },
-      select:{
+      select: {
         name: true,
         email: true,
         id: true,
-        posts: { select: { 
-          id:true,
-          title:true,
-          content:true,
-         } },
+        posts: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+          }
+        },
       }
     });
     if (!userDetails) {

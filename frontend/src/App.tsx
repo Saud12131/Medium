@@ -7,6 +7,7 @@ import BlogInfo from './pages/BlogInfo'
 import { Create } from './pages/Create'
 import MediumLandingPage from './pages/LandingPage'
 import UserInfo from './pages/UserInfo'
+import UserProfile from './pages/UserDetails'
 function App() {
 
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/blogs/:id" element={<BlogInfo />} />
           <Route path="/create" element={<Create />} />
           <Route path="/user/:id" element={<UserInfo />} />
+          <Route path="profile" element={<UserProfile />} />
 
         </Routes>
       </BrowserRouter>

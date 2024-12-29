@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BACKEND_URL } from '../cofig';
 import { Spinner } from '../components/spinner';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Appbar from '../components/Appbar';
 import { User, Calendar, BookOpen, Mail, Hash } from 'lucide-react';
 
@@ -103,7 +103,7 @@ export default function UserInfo() {
           <div className="p-6 border-b border-gray-200">
             <h3 className="text-2xl font-bold flex items-center">
               <BookOpen className="w-6 h-6 mr-2 text-blue-500" />
-              User Posts
+              User Blogs
               <span className="ml-auto bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
                 {userblogs.length}
               </span>
@@ -112,12 +112,15 @@ export default function UserInfo() {
           {userblogs.length > 0 ? (
             <div className="divide-y divide-gray-200">
               {userblogs.map((post, index) => (
+                  <Link to={`/blogs/${post.id}`}>
                 <div key={post.id} className={`p-6 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
                   <h4 className="text-xl font-semibold mb-2 text-blue-600">{post.title}</h4>
                   <p className="text-gray-700">{post.content}</p>
                 </div>
+              </Link>
               ))}
             </div>
+            
           ) : (
             <div className="p-6 text-center">
               <p className="text-gray-600 italic">No posts found for this user.</p>

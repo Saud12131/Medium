@@ -6,8 +6,20 @@ import { Spinner } from '../components/spinner';
 import RecomdHook from '../hooks/RecomdHook';
 
 export default function Blog() {
-  const { loading, blog } = useBlogs();
+  const { loading, blog, error } = useBlogs();
   const { recommendation } = RecomdHook();
+
+  if (error) {
+    return (
+      <div>
+        <Appbar />
+        <div className="flex items-center justify-center h-screen">
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div>

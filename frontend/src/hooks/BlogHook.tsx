@@ -16,9 +16,14 @@ export interface BlogTypes {
 export function useBlogs() {
   const [loading, setLoading] = useState(true);
   const [blog, setBlog] = useState<BlogTypes[]>([]);
-
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     let token = localStorage.getItem('token');
+    if (!token) {
+      setError('You need to log in to access this page.');
+      setLoading(false);
+      return;
+    }
     axios.get(`${BACKEND_URL}/api/v1/post/blogs`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -29,6 +34,11 @@ export function useBlogs() {
         setLoading(false);
       })
       .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          setError('You need to log in to access this page.');
+        } else {
+          setError('Failed to fetch blogs. Please try again later.');
+        }
         console.error("Error fetching blogs:", error);
         setLoading(false);
       });
@@ -37,6 +47,7 @@ export function useBlogs() {
   return {
     loading,
     blog,
+    error,
   };
 }
 
@@ -53,8 +64,7 @@ export function useftechBlog({ id }: { id: string }) {
     })
       .then((response) => {
         setBlog(response.data.post);
-        
-        console.log(response);
+
         setLoading(false);
       })
       .catch((error) => {
