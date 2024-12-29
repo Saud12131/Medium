@@ -16,7 +16,7 @@ interface ReccardProps {
 }
 export function Card({ authorname, title, content, publisheddate }: BlogcardProps) {
     return (
-        <article className="max-w-xl rounded-lg border border-gray-200 bg-white p-5 hover:bg-gray-50">
+        <article className="max-w-xl rounded-lg border border-gray-200 bg-white p-5 hover:border-slate-300 ">
             <div className="flex items-center gap-2 mb-4">
                 <Avatar authorname={authorname} />
                 <div className="flex items-center text-sm text-gray-600">

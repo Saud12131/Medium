@@ -25,7 +25,7 @@ export default function Blog() {
 
       <div className="flex h-screen">
         {/* Left Section: Blogs */}
-        <div className="flex-3 w-3/4 p-4 overflow-y-auto flex justify-center content-center">
+        <div className="flex-3 w-3/4 p-4 overflow-y-auto flex justify-center content-center no-scrollbar">
           <div className="grid grid-cols-1 gap-6 ">
             {blog.map((post) => (
               <Link to={`${post.id}`} key={post.id}>
@@ -42,7 +42,7 @@ export default function Blog() {
         </div>
 
         {/* Right Section: Recommendations */}
-        <div className="flex-1 w-1/4 bg-slate-50 p-4 overflow-y-auto">
+        <div className="flex-1 w-1/4  p-4 overflow-y-auto no-scrollbar border">
           <h3 className='font-medium mb-2'>You Might Know</h3>
           {recommendation.map((sugg) => (
             <RecCard
