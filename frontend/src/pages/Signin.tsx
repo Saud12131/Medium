@@ -4,15 +4,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import { SignIninput } from '@saudsayyed/medium-common'
 import axios from 'axios'
 import { BACKEND_URL } from '../cofig'
-
+import { Spinner } from '../components/spinner'
 export default function Signin() {
   const [formData, setFormData] = useState<SignIninput>({
     email: '',
     password: ''
-  })
+  });
+  const [loading, setloading] = useState(false);
   const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setloading(true);
     try {
       const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`, formData);
       const jwt = response.data.jwt;
@@ -22,7 +24,7 @@ export default function Signin() {
       if (err) {
         alert("something went wrong");
         console.log(err);
-        
+        setloading(false);
       }
     }
   }
@@ -81,8 +83,11 @@ export default function Signin() {
             <button
               type="submit"
               className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors"
+              disabled={loading}
             >
-              Sign In
+              <h2 className='flex justify-center items-center'>
+              {loading ? <Spinner /> : 'Sign In'}
+                </h2>
             </button>
           </form>
         </div>

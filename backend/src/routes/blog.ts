@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { decode, sign, verify } from 'hono/jwt';
 import { createblog, updateblog } from '@saudsayyed/medium-common';
+import { useId } from 'hono/jsx';
 
 export let BlogRoute = new Hono<{
   Bindings: {
@@ -129,7 +130,7 @@ BlogRoute.get('/:id', async (c) => {
   try {
     const post = await prisma.post.findFirst({
       where: { id: Number(id) },
-      select:{
+      select: {
         title: true,
         content: true,
         id: true,
@@ -147,3 +148,42 @@ BlogRoute.get('/:id', async (c) => {
     await prisma.$disconnect();
   }
 });
+
+BlogRoute.delete("/delete/:id", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+  try {
+    const userId = c.get("userId");
+    const id = c.req.param("id");
+
+    let post = await prisma.post.findFirst({
+      where: {
+        id: Number(id),
+        authorId: Number(userId)
+      }
+    });
+
+    if (!post) {
+      return c.json({
+        message: "Post not found or you do not have permission to delete this post.",
+      },401)
+    }
+
+    let deletpost = await prisma.post.delete({
+      where: {
+        id: Number(id),
+      }
+    });
+
+    return c.json({
+      message: "post deleted",
+      deletpost,
+    })
+  } catch (err) {
+    return c.json({
+      message: err
+    })
+  }
+
+})

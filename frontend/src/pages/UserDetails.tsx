@@ -4,7 +4,18 @@ import { BACKEND_URL } from '../cofig';
 import { Spinner } from '../components/spinner';
 import Appbar from '../components/Appbar';
 import { User, Calendar, Mail, Hash } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
+const CurrentUser = () => {
+    let token = localStorage.getItem('token');
+    if (!token) {
+        return null
+    }
+
+    const decode: { id: string } = jwtDecode(token);
+    return decode.id
+}
 export interface UserTypes {
     name: string;
     email: string;
@@ -22,6 +33,15 @@ export default function UserProfile() {
     const [userinfo, setUserinfo] = useState<UserTypes | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [blogs, setblogs] = useState<PostTypes[] | null>([]);
+
+    const handelDelete = () => {
+        let token = localStorage.getItem('token');
+        if (!token) {
+            console.log("token not found");
+            return;
+        }
+
+    }
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -103,22 +123,25 @@ export default function UserProfile() {
                     <h2 className="text-3xl font-bold text-white mb-2">My Blogs</h2>
                 </div>
                 <div className="p-6">
-                        {blogs?.length ? (
-                            <div className="grid grid-cols-1 gap-6">
-                                {blogs.map((post) => (
+                    {blogs?.length ? (
+                        <div className="grid grid-cols-1 gap-6">
+                            {blogs.map((post) => (
+                                <Link to={`/blogs/${post.id}`}>
                                     <div key={post.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
                                         <h3 className="text-xl font-bold mb-2">{post.title}</h3>
                                         <p>{post.content}</p>
+
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-gray-700">You have not written any blogs yet.</p>
-                        )}
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-700">You have not written any blogs yet.</p>
+                    )}
                 </div>
             </div>
         </div>
-        
+
 
 
     );
