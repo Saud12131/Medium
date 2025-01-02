@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { decode, jwt, sign, verify } from 'hono/jwt'
-
+import bcrypt from 'bcryptjs'
 
 export let UserRoute = new Hono<{
   Bindings: {
@@ -18,12 +18,20 @@ UserRoute.post('/signup', async (c) => {
 
   const body = await c.req.json();
 
+  if (!body.email || !body.password) {
+    return c.json({ error: 'Email and password are required' }, 400);
+  }
+  const password = body.password;
+
+  const salt = bcrypt.genSaltSync(10);
+  const hashedpassword = bcrypt.hashSync(password, salt);
+
   try {
     const user = await prisma.user.create({
       data: {
         name: body.name,
         email: body.email,
-        password: body.password
+        password: hashedpassword,
       },
     });
     //@ts-ignore
@@ -40,33 +48,43 @@ UserRoute.post('/signup', async (c) => {
 })
 
 UserRoute.post('/login', async (c) => {
+
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = await c.req.json();
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email: body.email,
-        password: body.password,
-      }
-    });
-    if (!user) {
-      return c.json({
-        error: "Invalid credentials"
-      }, 403);
+    const body = await c.req.json();
+
+    if (!body.email || !body.password) {
+      return c.json({ error: 'Email and password are required' }, 400);
     }
 
-    //@ts-ignore
-    const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ jwt })
+    const user = await prisma.user.findFirst({
+      where: { email: body.email },
+    });
 
+    if (!user) {
+      return c.json({ error: 'Invalid credentials' }, 403);
+    }
+
+    const isPasswordValid = bcrypt.compareSync(body.password, user.password);
+    if (!isPasswordValid) {
+      return c.json({ error: 'Invalid credentials' }, 403);
+    }
+
+    const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+
+    return c.json({ jwt });
   } catch (err) {
     console.error(err);
-    return c.text("Something went wrong", 500);
+    return c.text('Something went wrong', 500);
+  } finally {
+    await prisma.$disconnect();
   }
-})
+});
+
+export default UserRoute;
 
 UserRoute.get('/profile', async (c) => {
   const prisma = new PrismaClient({
