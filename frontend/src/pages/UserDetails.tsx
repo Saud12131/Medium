@@ -4,18 +4,7 @@ import { BACKEND_URL } from '../cofig';
 import { Spinner } from '../components/spinner';
 import Appbar from '../components/Appbar';
 import { User, Calendar, Mail, Hash } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-
-const CurrentUser = () => {
-    let token = localStorage.getItem('token');
-    if (!token) {
-        return null
-    }
-
-    const decode: { id: string } = jwtDecode(token);
-    return decode.id
-}
+import { Link, useNavigate } from 'react-router-dom';
 export interface UserTypes {
     name: string;
     email: string;
@@ -33,14 +22,28 @@ export default function UserProfile() {
     const [userinfo, setUserinfo] = useState<UserTypes | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [blogs, setblogs] = useState<PostTypes[] | null>([]);
+    const navigate = useNavigate();
+    const handelDelete = async ({ id }: { id: string }) => {
+        try {
 
-    const handelDelete = () => {
-        let token = localStorage.getItem('token');
-        if (!token) {
-            console.log("token not found");
-            return;
+
+            let token = localStorage.getItem('token');
+            if (!token) {
+                console.log("token not found");
+                return;
+            }
+            let res = await axios.delete(`${BACKEND_URL}/api/v1/post/delete/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (res.status = 200) {
+                navigate("/blogs")
+            }
+        } catch (err) {
+            alert("error");
+            console.log(err);
         }
-
     }
 
     useEffect(() => {
@@ -126,17 +129,26 @@ export default function UserProfile() {
                     {blogs?.length ? (
                         <div className="grid grid-cols-1 gap-6">
                             {blogs.map((post) => (
-                                <Link to={`/blogs/${post.id}`}>
-                                    <div key={post.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
-                                        <h3 className="text-xl font-bold mb-2">{post.title}</h3>
-                                        <p>{post.content}</p>
-
-                                    </div>
-                                </Link>
+                                <div key={post.id} className="bg-gray-100 p-6 rounded-lg shadow-md flex flex-col space-y-4">
+                                    <Link to={`/blogs/${post.id}`}>
+                                        <h3 className="text-xl font-bold mb-2 text-teal-600 hover:underline">
+                                            {post.title}
+                                        </h3>
+                                        <p className="text-gray-700">{post.content}</p>
+                                    </Link>
+                                    <button
+                                        onClick={() => handelDelete({ id: post.id })}
+                                        className="self-start bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             ))}
                         </div>
                     ) : (
-                        <p className="text-gray-700">You have not written any blogs yet.</p>
+                        <p className="text-gray-700 text-center">
+                            You have not written any blogs yet.
+                        </p>
                     )}
                 </div>
             </div>

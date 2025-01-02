@@ -167,7 +167,7 @@ BlogRoute.delete("/delete/:id", async (c) => {
     if (!post) {
       return c.json({
         message: "Post not found or you do not have permission to delete this post.",
-      },401)
+      }, 401)
     }
 
     let deletpost = await prisma.post.delete({
@@ -178,6 +178,7 @@ BlogRoute.delete("/delete/:id", async (c) => {
 
     return c.json({
       message: "post deleted",
+      status: 200,
       deletpost,
     })
   } catch (err) {
