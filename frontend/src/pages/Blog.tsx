@@ -4,7 +4,6 @@ import { Card, RecCard } from '../components/Card';
 import { useBlogs } from '../hooks/BlogHook';
 import { Spinner } from '../components/spinner';
 import RecomdHook from '../hooks/RecomdHook';
-
 export default function Blog() {
   const { loading, blog, error } = useBlogs();
   const { recommendation } = RecomdHook();
