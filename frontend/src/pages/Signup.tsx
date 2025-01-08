@@ -1,12 +1,11 @@
 //56:00
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Signupinput } from '@saudsayyed/medium-common'
 import axios from 'axios'
 import { BACKEND_URL } from '../cofig'
 import { Spinner } from '../components/spinner'
 export default function SignUpPage() {
-    const [formData, setFormData] = useState<Signupinput>({
+    const [formData, setFormData] = useState({
         email: '',
         name: '',
         password: '',

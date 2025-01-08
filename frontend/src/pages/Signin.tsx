@@ -1,12 +1,11 @@
 
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { SignIninput } from '@saudsayyed/medium-common'
 import axios from 'axios'
 import { BACKEND_URL } from '../cofig'
 import { Spinner } from '../components/spinner'
 export default function Signin() {
-  const [formData, setFormData] = useState<SignIninput>({
+  const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
