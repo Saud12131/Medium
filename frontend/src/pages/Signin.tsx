@@ -11,6 +11,14 @@ export default function Signin() {
   });
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
+
+  const credentials = async () => {
+    setFormData({
+      email: "guest@gmail.com",
+      password: "guest"
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setloading(true);
@@ -85,9 +93,16 @@ export default function Signin() {
               disabled={loading}
             >
               <h2 className='flex justify-center items-center'>
-              {loading ? <Spinner /> : 'Sign In'}
-                </h2>
+                {loading ? <Spinner /> : 'Sign In'}
+              </h2>
             </button>
+            <button
+            className="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
+            type="button"
+            onClick={credentials}
+          >
+            Guest credentials
+          </button>
           </form>
         </div>
       </div>

@@ -100,7 +100,7 @@ export default function SignUpPage() {
                             disabled={loading}
                         >
                             <h2 className='flex justify-center items-center'>
-                                {loading ? <Spinner /> : 'Sign Un'}
+                                {loading ? <Spinner /> : 'Sign Up'}
                             </h2>
                         </button>
                     </form>
