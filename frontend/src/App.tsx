@@ -8,6 +8,7 @@ import { Create } from './pages/Create'
 import MediumLandingPage from './pages/LandingPage'
 import UserInfo from './pages/UserInfo'
 import UserProfile from './pages/UserDetails'
+import EditBlog from './pages/EditBlog'
 function App() {
 
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/create" element={<Create />} />
           <Route path="/user/:id" element={<UserInfo />} />
           <Route path="profile" element={<UserProfile />} />
+          <Route path="/editblog/:id" element={<EditBlog />} />
 
         </Routes>
       </BrowserRouter>

@@ -13,6 +13,7 @@ export interface BlogTypes {
 }
 
 
+
 export function useBlogs() {
   const [loading, setLoading] = useState(true);
   const [blog, setBlog] = useState<BlogTypes[]>([]);
@@ -51,34 +52,40 @@ export function useBlogs() {
   };
 }
 
-export function useftechBlog({ id }: { id: string }) {
+export function useftechBlog({ id }: { id: string }): { loading: boolean; blog: BlogTypes | null } {
   const [loading, setLoading] = useState(true);
-  const [blog, setBlog] = useState();
+  const [blog, setBlog] = useState<BlogTypes | null>(null);
 
   useEffect(() => {
     let token = localStorage.getItem('token');
-    axios.get(`${BACKEND_URL}/api/v1/post/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    if (!token) {
+      console.error('No token found');
+      setLoading(false);
+      return;
+    }
+
+    axios
+      .get(`${BACKEND_URL}/api/v1/post/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setBlog(response.data.post);
-
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching blogs:", error);
-        console.log(blog);
+        console.error('Error fetching blog:', error);
         setLoading(false);
       });
-  }, []);
+  }, [id]);
 
   return {
     loading,
     blog,
   };
 }
+
 
 export default {
   useBlogs,

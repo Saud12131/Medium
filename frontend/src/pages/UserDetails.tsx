@@ -142,6 +142,12 @@ export default function UserProfile() {
                                     >
                                         Delete
                                     </button>
+                                    <button
+                                        onClick={() => navigate(`/editblog/${post.id}`)}
+                                        className="self-start bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+                                    >
+                                        Edit
+                                    </button>
                                 </div>
                             ))}
                         </div>

@@ -2,8 +2,6 @@ import { Hono } from 'hono';
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { decode, sign, verify } from 'hono/jwt';
-import { createblog, updateblog } from '@saudsayyed/medium-common';
-import { useId } from 'hono/jsx';
 
 export let BlogRoute = new Hono<{
   Bindings: {
@@ -40,11 +38,6 @@ BlogRoute.post('/create', async (c) => {
 
   const body = await c.req.json();
   const userId = c.get("userId");
-
-  const { success } = createblog.safeParse(body);
-  if (!success) {
-    return c.json({ message: "Incorrect input format" }, 400);
-  }
 
   try {
     const post = await prisma.post.create({
@@ -92,25 +85,21 @@ BlogRoute.get('/blogs', async (c) => {
 });
 
 // Update Post
-BlogRoute.put('/update', async (c) => {
+BlogRoute.put('/update/:id', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
-
-  const { success } = updateblog.safeParse(body);
-  if (!success) {
-    return c.json({ message: "Incorrect input format" }, 400);
-  }
-
+  const id = c.req.param("id");
+  let postid = parseInt(id);
   try {
     const post = await prisma.post.update({
-      where: { id: body.id },
+      where: { id: postid || body.id },
       data: { title: body.title, content: body.content },
     });
 
-    return c.json({ id: post.id });
+    return c.json({ id: post.id },200);
   } catch (err) {
     console.error("Error updating post:", err);
     return c.json({ error: "Error updating post", details: err }, 500);
