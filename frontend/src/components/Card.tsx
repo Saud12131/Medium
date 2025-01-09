@@ -7,12 +7,6 @@ interface BlogcardProps {
     id: string
 }
 
-
-interface ReccardProps {
-    email: string,
-    name: string,
-    id: string,
-}
 export function Card({ authorname, title, content, publisheddate }: BlogcardProps) {
     return (
         <article className="max-w-xl rounded-lg border border-gray-200 bg-white p-5 hover:border-slate-300 ">
@@ -33,25 +27,31 @@ export function Card({ authorname, title, content, publisheddate }: BlogcardProp
         </article>
     )
 }
-
-export function RecCard({ name, email, id }: ReccardProps) {
-    return (
-        <article className="max-w-xl rounded-lg border border-gray-400 bg-white p-5 hover:bg-gray-50 mb-7">
-            <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center text-sm text-gray-600">
-                    <span className="mb-1 text-xl font-bold tracking-tight text-gray-900">{name}</span>
-                </div>
-            </div>
-            <h2 className="m-3">{email}</h2>
-            <Link to={`/user/${id}`}>
-                <p className="ml-20 w-20 border-2 hover:border-gray-400 rounded-lg p-1 transition-all text-center">
-                    Visit Folk
-                </p>
-            </Link>
-
-        </article>
-    )
+interface RecCardProps {
+  name: string;
+  email: string;
+  id: string;
 }
+
+export function RecCard({ name, email, id }: RecCardProps) {
+  return (
+    <article className="w-full rounded-lg border border-gray-300 bg-white p-4 hover:bg-gray-50 mb-4 shadow-sm">
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center text-sm text-gray-600">
+          <span className="text-lg font-semibold text-gray-900">{name}</span>
+        </div>
+        <h2 className="text-sm text-gray-600">{email}</h2>
+        <Link to={`/user/${id}`} className="self-end">
+          <p className="border border-gray-300 hover:border-gray-400 rounded-lg px-3 py-1 transition-all text-center text-sm text-blue-600 hover:bg-blue-50">
+            Visit Profile
+          </p>
+        </Link>
+      </div>
+    </article>
+  )
+}
+
+
 
 export function Avatar({ authorname }: { authorname: string }) {
     return (

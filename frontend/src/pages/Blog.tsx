@@ -4,6 +4,7 @@ import { Card, RecCard } from '../components/Card';
 import { useBlogs } from '../hooks/BlogHook';
 import { Spinner } from '../components/spinner';
 import RecomdHook from '../hooks/RecomdHook';
+
 export default function Blog() {
   const { loading, blog, error } = useBlogs();
   const { recommendation } = RecomdHook();
@@ -31,15 +32,15 @@ export default function Blog() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Appbar />
 
-      <div className="flex h-screen">
+      <div className="flex-grow flex">
         {/* Left Section: Blogs */}
-        <div className="flex-3 w-3/4 p-4 overflow-y-auto flex justify-center content-center no-scrollbar">
-          <div className="grid grid-cols-1 gap-6 ">
+        <div className="w-full lg:w-3/4 p-4 overflow-y-auto">
+          <div className="max-w-3xl mx-auto">
             {blog.map((post) => (
-              <Link to={`${post.id}`} key={post.id}>
+              <Link to={`${post.id}`} key={post.id} className="block mb-6">
                 <Card
                   id={post.id}
                   authorname={post.author.name || 'anonymous'}
@@ -52,20 +53,22 @@ export default function Blog() {
           </div>
         </div>
 
-        {/* Right Section: Recommendations */}
-        <div className="flex-1 w-1/4  p-4 overflow-y-auto no-scrollbar border">
-          <h3 className='font-medium mb-2'>You Might Know</h3>
-          {recommendation.map((sugg) => (
-            <RecCard
-              id={sugg.id}
-              name={sugg.name}
-              email={sugg.email}
-              key={sugg.id}
-            />
-
-          ))}
+        {/* Right Section: Recommendations (visible only on desktop) */}
+        <div className="hidden lg:block w-1/4 p-4 bg-gray-100 border-l border-gray-300">
+          <h3 className='font-semibold text-lg mb-4'>You Might Know</h3>
+          <div className="space-y-4">
+            {recommendation.map((sugg) => (
+              <RecCard
+                key={sugg.id}
+                id={sugg.id}
+                name={sugg.name}
+                email={sugg.email}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
